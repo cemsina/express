@@ -5,7 +5,7 @@
 var express = require('../../');
 
 var app = module.exports = express();
-
+const ejs = require('ejs');
 // Register ejs as .html. If we did
 // not call this, we would need to
 // name our views foo.ejs instead
@@ -17,8 +17,13 @@ var app = module.exports = express();
 // we simply pass _any_ function, in this
 // case `ejs.__express`.
 
-app.engine('.html', require('ejs').__express);
-
+app.engine('.html', function (filePath, options, callback) {
+  ejs.__express(filePath, options, function (err, html) {
+    if (err) 
+      return callback(err)
+    callback(null, html);
+  });
+});
 // Optional since express defaults to CWD/views
 
 app.set('views', __dirname + '/views');
